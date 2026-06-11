@@ -3,20 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phoenix AI</title>
+    <title>🔥 Phoenix AI</title>
 
-<!-- 1. Marked.js (Verified) -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/16.3.0/lib/marked.umd.min.js"></script>
+    <!-- Marked.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/16.3.0/lib/marked.umd.min.js"></script>
 
-<!-- 2. FIXED PRISM LINKS -->
-<!-- Core Theme (Tomorrow Night) -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
-<!-- Core Library -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-<!-- Language Components -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+    <!-- Prism.js -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+
     <style>
         :root { --p-red: #ff1a1a; --bg: #fff; --sidebar-bg: #f9f9f9; --border: #e5e5e5; --text: #000; --input-bg: #f4f4f4; --bubble-user: #f4f4f4; --code-bg: #2d2d2d; }
         body.dark-mode { --bg: #0d0d0d; --sidebar-bg: #000; --border: #262626; --text: #ececec; --input-bg: #171717; --bubble-user: #212121; --code-bg: #1a1a1a; }
@@ -55,20 +53,38 @@
         .btn-m { padding: 10px 24px; border-radius: 10px; cursor: pointer; font-size: 12px; font-weight: 900; border: none; margin: 5px; }
         .btn-m.red { background: var(--p-red); color: white; }
         .btn-m.grey { background: #333; color: white; }
+        #stop-btn { font-size: 11px; font-weight: 800; color: var(--p-red); cursor: pointer; margin-top: 8px; display: none; text-align: center; }
     </style>
 </head>
 <body class="light-mode">
-<div id="phoenix-modal"><div class="modal-box"><h3 id="modal-title" style="color:var(--p-red); font-weight:900; margin-bottom:10px;">Phoenix AI says</h3><p id="modal-desc" style="margin-bottom:20px;"></p><input type="text" id="modal-input" style="display:none; width:100%; padding:10px; margin-bottom:20px; border-radius:10px; border:1px solid var(--border);"><div class="modal-footer"><button class="btn-m red" id="modal-ok">Confirm</button><button class="btn-m grey" onclick="closeModal()">Cancel</button></div></div></div>
+<div id="phoenix-modal">
+    <div class="modal-box">
+        <h3 id="modal-title" style="color:var(--p-red); font-weight:900; margin-bottom:10px;">Phoenix AI says</h3>
+        <p id="modal-desc" style="margin-bottom:20px;"></p>
+        <input type="text" id="modal-input" style="display:none; width:100%; padding:10px; margin-bottom:20px; border-radius:10px; border:1px solid var(--border);">
+        <div class="modal-footer">
+            <button class="btn-m red" id="modal-ok">Confirm</button>
+            <button class="btn-m grey" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+</div>
+
 <div id="app-container" class="landing-view">
     <div id="sidebar">
         <div class="sidebar-btn" style="padding:12px; border:1px solid var(--p-red); color:var(--p-red); text-align:center; border-radius:10px; cursor:pointer; font-size:11px; font-weight:800; margin-bottom:8px;" onclick="createNewChat()">+ NEW CHAT</div>
         <div class="sidebar-btn" style="padding:12px; border:1px solid #555; color:#555; text-align:center; border-radius:10px; cursor:pointer; font-size:11px; font-weight:800; margin-bottom:8px;" onclick="clearAllPrompt()">CLEAR HISTORY</div>
-        <div class="sidebar-header">Recent</div><div id="chat-list" style="flex:1; overflow-y:auto"></div>
+        <div class="sidebar-header">Recent</div>
+        <div id="chat-list" style="flex:1; overflow-y:auto"></div>
         <div id="neuron-gauge-container">
-            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:900;color:var(--p-red)"><span>Neurons</span><span id="neuron-value">0 / 10k</span></div>
-            <div style="background:rgba(0,0,0,0.1); border-radius:3px"><div id="gauge-fill" class="gauge-bar-fill"></div></div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:900;color:var(--p-red)">
+                <span>Neurons</span><span id="neuron-value">0 / 10k</span>
+            </div>
+            <div style="background:rgba(0,0,0,0.1); border-radius:3px">
+                <div id="gauge-fill" class="gauge-bar-fill"></div>
+            </div>
         </div>
     </div>
+
     <div id="chat-section">
         <div id="chat-header-brand">PHOENIX AI</div>
         <div id="chat-container"></div>
@@ -90,33 +106,367 @@
                 <textarea id="user-input" placeholder="Message Phoenix..." rows="1"></textarea>
                 <div id="send-btn" style="color:var(--p-red); cursor:pointer; font-size:24px; font-weight:900" onclick="sendMessage()">➔</div>
             </div>
+            <div id="stop-btn" onclick="stopGeneration()">Stop generating</div>
         </div>
     </div>
 </div>
+
 <script>
     const WORKER_URL = "https://phoenix-ai-proxy.prabhavd75.workers.dev/";
-    let chats = JSON.parse(localStorage.getItem('phoenix_chats') || '{}'), activeChatId = localStorage.getItem('phoenix_active_id'), attachedImg = null, isThinking = false;
+    let chats = JSON.parse(localStorage.getItem('phoenix_chats') || '{}');
+    let activeChatId = localStorage.getItem('phoenix_active_id');
+    let attachedImg = null;
+    let isThinking = false;
+    let abortController = null;
     let neuronStats = JSON.parse(localStorage.getItem('phoenix_neurons') || '{"count":0}');
-    function openModal(desc, cb, inp = false, init = "") { document.getElementById('phoenix-modal').style.display = 'flex'; document.getElementById('modal-desc').innerText = desc; const i = document.getElementById('modal-input'); i.style.display = inp ? 'block' : 'none'; i.value = init; document.getElementById('modal-ok').onclick = () => { cb(inp ? i.value : true); closeModal(); }; }
-    function closeModal() { document.getElementById('phoenix-modal').style.display = 'none'; }
-    function updateGauge() { const p = Math.min((neuronStats.count / 10000) * 100, 100); document.getElementById('gauge-fill').style.width = p + '%'; document.getElementById('neuron-value').innerText = `${Math.round(neuronStats.count)} / 10k`; localStorage.setItem('phoenix_neurons', JSON.stringify(neuronStats)); }
-    function sendMessage() { const f = document.getElementById('user-input'), text = f.value.trim(); if((!text && !attachedImg) || isThinking) return; isThinking = true; document.getElementById('app-container').classList.remove('landing-view'); let content = attachedImg ? [{ type: "text", text: text || "Analyze." }, { type: "image_url", image_url: { url: attachedImg } }] : text; appendMessage('user', content, null, chats[activeChatId].history.length); chats[activeChatId].history.push({ role: "user", content: content }); if (chats[activeChatId].title === "New Session") { chats[activeChatId].title = text.substring(0, 25) || "Session"; renderList(); } f.value = ''; f.style.height = 'auto'; clearImg(); save(); getAIResponse(document.getElementById('model-select').value); }
-    async function getAIResponse(m) { const idx = chats[activeChatId].history.length; const div = appendMessage('ai', '<div id="think" class="thinking-txt">Thinking...</div>', m, idx); const cDiv = div.querySelector('.content'); try { const res = await fetch(WORKER_URL, { method: "POST", body: JSON.stringify({ messages: chats[activeChatId].history, model: m }) }); const reader = res.body.getReader(), decoder = new TextDecoder(); let full = ""; while (true) { const { done, value } = await reader.read(); if (done) break; const chunk = decoder.decode(value); if (full === "" && chunk.trim()) div.querySelector('#think')?.remove(); full += chunk; neuronStats.count += (chunk.length * 0.4); updateGauge(); cDiv.innerHTML = marked.parse(full); addCodeFeatures(cDiv); document.getElementById('chat-container').scrollTop = 1e9; } chats[activeChatId].history.push({ role: "assistant", content: full, modelUsed: m }); save(); } catch(e) { cDiv.innerHTML = "Phoenix had a hiccup. Sending fallback..."; } finally { isThinking = false; } }
-    function addCodeFeatures(c) { c.querySelectorAll('pre').forEach(pre => { if (pre.parentElement.classList.contains('code-body')) return; const w = document.createElement('div'); w.className = 'code-wrapper'; const h = document.createElement('div'); h.className = 'code-header'; h.innerHTML = `<span>Code</span><span onclick="navigator.clipboard.writeText(this.closest('.code-wrapper').querySelector('pre').innerText); this.innerText='COPIED'" style="cursor:pointer">Copy</span>`; const b = document.createElement('div'); b.className = 'code-body'; const n = document.createElement('div'); n.className = 'line-numbers'; pre.parentNode.insertBefore(w, pre); w.appendChild(h); w.appendChild(b); b.appendChild(n); b.appendChild(pre); n.innerHTML = Array.from({length: pre.innerText.split('\n').length}, (_, i) => i + 1).join('<br>'); }); }
-    function appendMessage(r, c, m, h) { const d = document.createElement('div'); d.className = `message ${r}`; let b = (r === 'ai' && m) ? `<span class="model-badge">${m.toUpperCase()}</span>` : ''; d.innerHTML = `<div class="label-row"><div style="display:flex;align-items:center"><span class="label-text">${r.toUpperCase()}</span>${b}</div><div class="chat-dots" onclick="event.stopPropagation(); msgOptions('${activeChatId}', ${h})">⋮</div></div><div class="content"></div>`; document.getElementById('chat-container').appendChild(d); const cDiv = d.querySelector('.content'); if (typeof c === 'string') cDiv.innerHTML = marked.parse(c); else c.forEach(p => { if (p.type === 'text') cDiv.innerHTML += marked.parse(p.text); if (p.type === 'image_url') cDiv.innerHTML += `<img src="${p.image_url.url}" style="max-width:100%; border-radius:12px; margin-top:10px">`; }); return d; }
-    function msgOptions(c, h) { openModal("Delete message?", (ok) => { if(ok) { chats[c].history.splice(h, 1); loadChat(c); save(); } }); }
-    function createNewChat() { activeChatId = Date.now().toString(); chats[activeChatId] = { title: "New Session", history: [{ role: "system", content: "Phoenix" }] }; save(); loadChat(activeChatId); }
-    function loadChat(id) { activeChatId = id; localStorage.setItem('phoenix_active_id', id); document.getElementById('chat-container').innerHTML = ''; if (chats[id].history.length > 1) { document.getElementById('app-container').classList.remove('landing-view'); chats[id].history.slice(1).forEach((m, i) => appendMessage(m.role, m.content, m.modelUsed, i+1)); } else document.getElementById('app-container').classList.add('landing-view'); renderList(); }
-    function renderList() { const l = document.getElementById('chat-list'); l.innerHTML = ''; Object.keys(chats).reverse().forEach(id => { l.innerHTML += `<div class="chat-item ${id === activeChatId ? 'active' : ''}" onclick="loadChat('${id}')"><span style="flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${chats[id].title}</span><span onclick="event.stopPropagation(); deletePrompt('${id}')">✕</span><span onclick="event.stopPropagation(); renamePrompt('${id}')" style="margin-left:5px">✎</span></div>`; }); }
-    function deletePrompt(id) { openModal("Delete session?", (ok) => { if(ok) { delete chats[id]; loadChat(Object.keys(chats).pop() || createNewChat()); save(); } }); }
-    function renamePrompt(id) { openModal("Rename session:", (v) => { if(v) { chats[id].title = v; renderList(); save(); } }, true, chats[id].title); }
-    function clearAllPrompt() { openModal("Wipe all history?", (ok) => { if(ok) { localStorage.removeItem('phoenix_chats'); chats = {}; createNewChat(); } }); }
-    function handleFileDirect(f) { const file = (f instanceof FileList) ? f[0] : f; if (!file || !file.type.startsWith('image/')) return; const r = new FileReader(); r.onload = (e) => { attachedImg = e.target.result; const pb = document.getElementById('preview-bar'); pb.style.display='flex'; pb.innerHTML=`<img src="${attachedImg}" style="height:60px; border-radius:8px; border:1px solid var(--p-red)"><span onclick="clearImg()" style="color:red;cursor:pointer;margin-left:10px;font-weight:900">✕</span>`; }; r.readAsDataURL(file); }
-    function clearImg() { attachedImg = null; document.getElementById('preview-bar').style.display='none'; }
-    function save() { localStorage.setItem('phoenix_chats', JSON.stringify(chats)); }
-    window.addEventListener('paste', (e) => { const items = (e.clipboardData || e.originalEvent.clipboardData).items; for (let i in items) if (items[i].kind === 'file' && items[i].type.startsWith('image/')) handleFileDirect(items[i].getAsFile()); });
-    document.getElementById('user-input').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-    window.onload = () => { updateGauge(); if(activeChatId && chats[activeChatId]) loadChat(activeChatId); else createNewChat(); };
+
+    function openModal(desc, cb, inp = false, init = "") {
+        document.getElementById('phoenix-modal').style.display = 'flex';
+        document.getElementById('modal-desc').innerText = desc;
+        const i = document.getElementById('modal-input');
+        i.style.display = inp ? 'block' : 'none';
+        i.value = init;
+        document.getElementById('modal-ok').onclick = () => {
+            cb(inp ? i.value : true);
+            closeModal();
+        };
+    }
+
+    function closeModal() {
+        document.getElementById('phoenix-modal').style.display = 'none';
+    }
+
+    function updateGauge() {
+        const p = Math.min((neuronStats.count / 10000) * 100, 100);
+        document.getElementById('gauge-fill').style.width = p + '%';
+        document.getElementById('neuron-value').innerText = `${Math.round(neuronStats.count)} / 10k`;
+        localStorage.setItem('phoenix_neurons', JSON.stringify(neuronStats));
+    }
+
+    function scrollToBottom() {
+        const chatContainer = document.getElementById('chat-container');
+        chatContainer.scrollTo({ top: chatContainer.scrollHeight, behavior: 'smooth' });
+    }
+
+    function sendMessage() {
+        const f = document.getElementById('user-input');
+        const text = f.value.trim();
+        if ((!text && !attachedImg) || isThinking) return;
+
+        if (!activeChatId || !chats[activeChatId]) {
+            createNewChat();
+        }
+
+        isThinking = true;
+        document.getElementById('app-container').classList.remove('landing-view');
+        document.getElementById('stop-btn').style.display = 'block';
+
+        let content = attachedImg
+            ? [{ type: "text", text: text || "Analyze." }, { type: "image_url", image_url: { url: attachedImg } }]
+            : text;
+
+        const historyIndex = chats[activeChatId].history.length;
+        appendMessage('user', content, null, historyIndex);
+        chats[activeChatId].history.push({ role: "user", content: content });
+
+        if (chats[activeChatId].title === "New Session") {
+            chats[activeChatId].title = text.substring(0, 25) || "Session";
+            renderList();
+        }
+
+        f.value = '';
+        f.style.height = 'auto';
+        clearImg();
+        save();
+        getAIResponse(document.getElementById('model-select').value);
+    }
+
+    async function getAIResponse(m) {
+        const idx = chats[activeChatId].history.length;
+        const div = appendMessage('ai', '', m, idx);
+        const cDiv = div.querySelector('.content');
+        cDiv.innerHTML = '<div id="think" class="thinking-txt">Thinking...</div>';
+
+        try {
+            abortController = new AbortController();
+            const res = await fetch(WORKER_URL, {
+                method: "POST",
+                body: JSON.stringify({ messages: chats[activeChatId].history, model: m }),
+                signal: abortController.signal
+            });
+
+            if (!res.ok) {
+                throw new Error(`HTTP ${res.status}`);
+            }
+
+            let full = "";
+
+            if (res.body && res.body.getReader) {
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    const chunkRaw = decoder.decode(value);
+
+                    // Try to handle SSE-style chunks; if not SSE, just append raw
+                    const lines = chunkRaw.split("\n");
+                    for (const line of lines) {
+                        if (!line.trim()) continue;
+                        if (line.startsWith("data:")) {
+                            const data = line.replace("data:", "").trim();
+                            if (data === "[DONE]") continue;
+                            full += data;
+                        } else {
+                            full += line;
+                        }
+                    }
+
+                    if (full.trim()) {
+                        div.querySelector('#think')?.remove();
+                        neuronStats.count += (chunkRaw.length * 0.4);
+                        updateGauge();
+                        cDiv.innerHTML = marked.parse(full);
+                        addCodeFeatures(cDiv);
+                        Prism.highlightAllUnder(cDiv);
+                        scrollToBottom();
+                    }
+                }
+            } else {
+                // Non-streaming fallback
+                const text = await res.text();
+                full = text;
+                div.querySelector('#think')?.remove();
+                neuronStats.count += (text.length * 0.4);
+                updateGauge();
+                cDiv.innerHTML = marked.parse(full);
+                addCodeFeatures(cDiv);
+                Prism.highlightAllUnder(cDiv);
+                scrollToBottom();
+            }
+
+            chats[activeChatId].history.push({ role: "assistant", content: full, modelUsed: m });
+            save();
+        } catch (e) {
+            console.error(e);
+            cDiv.innerHTML = "Phoenix had a hiccup. Please try again.";
+        } finally {
+            isThinking = false;
+            abortController = null;
+            document.getElementById('stop-btn').style.display = 'none';
+        }
+    }
+
+    function stopGeneration() {
+        if (abortController) {
+            abortController.abort();
+        }
+        isThinking = false;
+        document.getElementById('stop-btn').style.display = 'none';
+    }
+
+    function addCodeFeatures(c) {
+        c.querySelectorAll('pre').forEach(pre => {
+            if (pre.parentElement.classList.contains('code-body')) return;
+            const w = document.createElement('div');
+            w.className = 'code-wrapper';
+            const h = document.createElement('div');
+            h.className = 'code-header';
+            h.innerHTML = `<span>Code</span><span onclick="navigator.clipboard.writeText(this.closest('.code-wrapper').querySelector('pre').innerText); this.innerText='COPIED'" style="cursor:pointer">Copy</span>`;
+            const b = document.createElement('div');
+            b.className = 'code-body';
+            const n = document.createElement('div');
+            n.className = 'line-numbers';
+
+            pre.parentNode.insertBefore(w, pre);
+            w.appendChild(h);
+            w.appendChild(b);
+            b.appendChild(n);
+            b.appendChild(pre);
+
+            const lines = pre.innerText.split('\n').length;
+            n.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+        });
+    }
+
+    function appendMessage(r, c, m, h) {
+        const d = document.createElement('div');
+        d.className = `message ${r}`;
+        let b = (r === 'ai' && m) ? `<span class="model-badge">${m.toUpperCase()}</span>` : '';
+        d.innerHTML = `
+            <div class="label-row">
+                <div style="display:flex;align-items:center">
+                    <span class="label-text">${r.toUpperCase()}</span>${b}
+                </div>
+                <div class="chat-dots" onclick="event.stopPropagation(); msgOptions('${activeChatId}', ${h})">⋮</div>
+            </div>
+            <div class="content"></div>
+        `;
+        document.getElementById('chat-container').appendChild(d);
+        const cDiv = d.querySelector('.content');
+
+        if (typeof c === 'string' && r !== 'ai') {
+            cDiv.innerHTML = marked.parse(c);
+            addCodeFeatures(cDiv);
+            Prism.highlightAllUnder(cDiv);
+        } else if (Array.isArray(c)) {
+            c.forEach(p => {
+                if (p.type === 'text') cDiv.innerHTML += marked.parse(p.text);
+                if (p.type === 'image_url') cDiv.innerHTML += `<img src="${p.image_url.url}" style="max-width:100%; border-radius:12px; margin-top:10px">`;
+            });
+            addCodeFeatures(cDiv);
+            Prism.highlightAllUnder(cDiv);
+        }
+
+        scrollToBottom();
+        return d;
+    }
+
+    function msgOptions(c, h) {
+        openModal("Delete message?", (ok) => {
+            if (ok) {
+                chats[c].history.splice(h, 1);
+                isThinking = false;
+                abortController = null;
+                document.getElementById('stop-btn').style.display = 'none';
+                loadChat(c);
+                save();
+            }
+        });
+    }
+
+    function createNewChat() {
+        activeChatId = Date.now().toString();
+        chats[activeChatId] = { title: "New Session", history: [{ role: "system", content: "Phoenix" }] };
+        clearImg();
+        save();
+        loadChat(activeChatId);
+    }
+
+    function loadChat(id) {
+        activeChatId = id;
+        localStorage.setItem('phoenix_active_id', id);
+        const chatContainer = document.getElementById('chat-container');
+        chatContainer.innerHTML = '';
+
+        const hasNonSystem = chats[id].history.some(m => m.role !== 'system');
+        if (hasNonSystem) {
+            document.getElementById('app-container').classList.remove('landing-view');
+            chats[id].history.forEach((m, i) => {
+                if (i === 0) return;
+                appendMessage(m.role, m.content, m.modelUsed, i);
+            });
+        } else {
+            document.getElementById('app-container').classList.add('landing-view');
+        }
+
+        renderList();
+    }
+
+    function renderList() {
+        const l = document.getElementById('chat-list');
+        l.innerHTML = '';
+        Object.keys(chats).reverse().forEach(id => {
+            l.innerHTML += `
+                <div class="chat-item ${id === activeChatId ? 'active' : ''}" onclick="loadChat('${id}')">
+                    <span style="flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">${chats[id].title}</span>
+                    <span onclick="event.stopPropagation(); deletePrompt('${id}')">✕</span>
+                    <span onclick="event.stopPropagation(); renamePrompt('${id}')" style="margin-left:5px">✎</span>
+                </div>
+            `;
+        });
+    }
+
+    function deletePrompt(id) {
+        openModal("Delete session?", (ok) => {
+            if (ok) {
+                delete chats[id];
+                const nextId = Object.keys(chats).pop();
+                if (nextId) {
+                    loadChat(nextId);
+                } else {
+                    createNewChat();
+                }
+                save();
+            }
+        });
+    }
+
+    function renamePrompt(id) {
+        openModal("Rename session:", (v) => {
+            if (v) {
+                chats[id].title = v;
+                renderList();
+                save();
+            }
+        }, true, chats[id].title);
+    }
+
+    function clearAllPrompt() {
+        openModal("Wipe all history?", (ok) => {
+            if (ok) {
+                localStorage.removeItem('phoenix_chats');
+                chats = {};
+                createNewChat();
+            }
+        });
+    }
+
+    function handleFileDirect(f) {
+        const file = (f instanceof FileList) ? f[0] : f;
+        if (!file || !file.type.startsWith('image/')) return;
+        const r = new FileReader();
+        r.onload = (e) => {
+            attachedImg = e.target.result;
+            const pb = document.getElementById('preview-bar');
+            pb.style.display = 'flex';
+            pb.innerHTML = `
+                <img src="${attachedImg}" style="height:60px; border-radius:8px; border:1px solid var(--p-red)">
+                <span onclick="clearImg()" style="color:red;cursor:pointer;margin-left:10px;font-weight:900">✕</span>
+            `;
+        };
+        r.readAsDataURL(file);
+    }
+
+    function clearImg() {
+        attachedImg = null;
+        document.getElementById('preview-bar').style.display = 'none';
+    }
+
+    function save() {
+        localStorage.setItem('phoenix_chats', JSON.stringify(chats));
+    }
+
+    window.addEventListener('paste', (e) => {
+        const items = (e.clipboardData || e.originalEvent?.clipboardData).items;
+        for (let i in items) {
+            if (items[i].kind === 'file' && items[i].type.startsWith('image/')) {
+                handleFileDirect(items[i].getAsFile());
+            }
+        }
+    });
+
+    const userInput = document.getElementById('user-input');
+    userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+    userInput.addEventListener('input', () => {
+        userInput.style.height = 'auto';
+        userInput.style.height = userInput.scrollHeight + 'px';
+    });
+
+    window.onload = () => {
+        updateGauge();
+        if (activeChatId && chats[activeChatId]) {
+            loadChat(activeChatId);
+        } else {
+            createNewChat();
+        }
+    };
 </script>
 </body>
 </html>
