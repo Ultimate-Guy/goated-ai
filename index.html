@@ -19,14 +19,12 @@
         :root { --p-red: #ff1a1a; --bg: #fff; --sidebar-bg: #f9f9f9; --border: #e5e5e5; --text: #000; --input-bg: #f4f4f4; --bubble-user: #f4f4f4; --code-bg: #2d2d2d; }
         body.dark-mode { --bg: #0d0d0d; --sidebar-bg: #000; --border: #262626; --text: #ececec; --input-bg: #171717; --bubble-user: #212121; --code-bg: #1a1a1a; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body, html { width: 100vw; height: 100vh; overflow: hidden; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; transition: 0.3s; }
+        body, html { width: 100vw; height: 100vh; overflow: hidden; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; transition: 0.3s; }
         #app-container { display: flex; height: 100vh; width: 100vw; }
         #sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; z-index: 200; }
         .sidebar-header { font-size: 10px; font-weight: 800; color: #888; margin: 20px 0 10px 0; text-transform: uppercase; }
         .chat-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; border-radius: 10px; cursor: pointer; font-size: 13px; margin-bottom: 4px; color: var(--text); }
         .chat-item.active { background: rgba(255,26,26,0.08); font-weight: 700; color: var(--p-red); }
-        #neuron-gauge-container { margin-top: auto; padding: 15px; background: rgba(255, 26, 26, 0.05); border-radius: 12px; border: 1px solid rgba(255, 26, 26, 0.1); }
-        .gauge-bar-fill { height: 6px; width: 0%; background: var(--p-red); border-radius: 3px; transition: 0.5s; margin: 8px 0; }
         .landing-view #sidebar { transform: translateX(-100%); width: 0; padding: 0; visibility: hidden; }
         .landing-view #chat-container { display: none; }
         .landing-view #input-wrapper { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
@@ -39,6 +37,8 @@
         .label-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; padding: 0 12px; }
         .label-text { font-size: 9px; font-weight: 900; color: var(--p-red); }
         .model-badge { font-size: 8px; font-weight: 900; background: #e0e0e0; color: #777; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; margin-left: 8px; }
+        .message .content { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; line-height: 1.5; }
+        .message .content p { margin-bottom: 8px; }
         .code-wrapper { margin: 15px 0; border-radius: 8px; background: #222; border: 1px solid #444; overflow: hidden; display: flex; flex-direction: column; }
         .code-header { display: flex; justify-content: space-between; padding: 8px 16px; background: rgba(255,255,255,0.05); font-size: 11px; color: #aaa; border-bottom: 1px solid #333; }
         .code-body { display: flex; overflow-x: auto; }
@@ -75,14 +75,6 @@
         <div class="sidebar-btn" style="padding:12px; border:1px solid #555; color:#555; text-align:center; border-radius:10px; cursor:pointer; font-size:11px; font-weight:800; margin-bottom:8px;" onclick="clearAllPrompt()">CLEAR HISTORY</div>
         <div class="sidebar-header">Recent</div>
         <div id="chat-list" style="flex:1; overflow-y:auto"></div>
-        <div id="neuron-gauge-container">
-            <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:900;color:var(--p-red)">
-                <span>Neurons</span><span id="neuron-value">0 / 10k</span>
-            </div>
-            <div style="background:rgba(0,0,0,0.1); border-radius:3px">
-                <div id="gauge-fill" class="gauge-bar-fill"></div>
-            </div>
-        </div>
     </div>
 
     <div id="chat-section">
@@ -96,12 +88,12 @@
                 <input type="file" id="file-in" hidden onchange="handleFileDirect(this.files)">
                 <select id="model-select" style="background:transparent; border:none; color:var(--p-red); font-size:10px; font-weight:900; outline:none; text-transform:uppercase; cursor:pointer">
                     <option value="gpt-4o-turbo">GPT-4o-turbo (Vision)</option>
-                    <option value="llama-versatile">Llama 3 70B</option>
-                    <option value="llama-instant">Llama 3 8B</option>
-                    <option value="gemma-moe">Gemma 2 27B</option>
-                    <option value="llama-vision">Llama 3.2 Vision</option>
+                    <option value="llama-versatile">Llama 3.1 70B</option>
+                    <option value="llama-instant">Llama 3.1 8B</option>
+                    <option value="llama-vision">Llama 3.2 Vision (Vision)</option>
                     <option value="glm">GLM-4.7 Flash</option>
                     <option value="kimi">Kimi-K2.5</option>
+                    <option value="gemma-moe">Gemma 2 27B</option>
                 </select>
                 <textarea id="user-input" placeholder="Message Phoenix..." rows="1"></textarea>
                 <div id="send-btn" style="color:var(--p-red); cursor:pointer; font-size:24px; font-weight:900" onclick="sendMessage()">➔</div>
@@ -118,7 +110,6 @@
     let attachedImg = null;
     let isThinking = false;
     let abortController = null;
-    let neuronStats = JSON.parse(localStorage.getItem('phoenix_neurons') || '{"count":0}');
 
     function openModal(desc, cb, inp = false, init = "") {
         document.getElementById('phoenix-modal').style.display = 'flex';
@@ -134,13 +125,6 @@
 
     function closeModal() {
         document.getElementById('phoenix-modal').style.display = 'none';
-    }
-
-    function updateGauge() {
-        const p = Math.min((neuronStats.count / 10000) * 100, 100);
-        document.getElementById('gauge-fill').style.width = p + '%';
-        document.getElementById('neuron-value').innerText = `${Math.round(neuronStats.count)} / 10k`;
-        localStorage.setItem('phoenix_neurons', JSON.stringify(neuronStats));
     }
 
     function scrollToBottom() {
@@ -161,9 +145,23 @@
         document.getElementById('app-container').classList.remove('landing-view');
         document.getElementById('stop-btn').style.display = 'block';
 
-        let content = attachedImg
-            ? [{ type: "text", text: text || "Analyze." }, { type: "image_url", image_url: { url: attachedImg } }]
-            : text;
+        const selectedModel = document.getElementById('model-select').value;
+        let modelToUse = selectedModel;
+        let content;
+
+        if (attachedImg) {
+            // Force a vision-capable Groq model if needed
+            if (selectedModel !== "gpt-4o-turbo" && selectedModel !== "llama-vision") {
+                modelToUse = "llama-vision";
+            }
+
+            content = [
+                { type: "text", text: text || "Analyze this image." },
+                { type: "image_url", image_url: { url: attachedImg } }
+            ];
+        } else {
+            content = text;
+        }
 
         const historyIndex = chats[activeChatId].history.length;
         appendMessage('user', content, null, historyIndex);
@@ -178,7 +176,7 @@
         f.style.height = 'auto';
         clearImg();
         save();
-        getAIResponse(document.getElementById('model-select').value);
+        getAIResponse(modelToUse);
     }
 
     async function getAIResponse(m) {
@@ -191,11 +189,14 @@
             abortController = new AbortController();
             const res = await fetch(WORKER_URL, {
                 method: "POST",
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ messages: chats[activeChatId].history, model: m }),
                 signal: abortController.signal
             });
 
             if (!res.ok) {
+                const errText = await res.text();
+                console.error("Worker error:", errText);
                 throw new Error(`HTTP ${res.status}`);
             }
 
@@ -210,23 +211,10 @@
                     if (done) break;
                     const chunkRaw = decoder.decode(value);
 
-                    // Try to handle SSE-style chunks; if not SSE, just append raw
-                    const lines = chunkRaw.split("\n");
-                    for (const line of lines) {
-                        if (!line.trim()) continue;
-                        if (line.startsWith("data:")) {
-                            const data = line.replace("data:", "").trim();
-                            if (data === "[DONE]") continue;
-                            full += data;
-                        } else {
-                            full += line;
-                        }
-                    }
+                    full += chunkRaw;
 
                     if (full.trim()) {
                         div.querySelector('#think')?.remove();
-                        neuronStats.count += (chunkRaw.length * 0.4);
-                        updateGauge();
                         cDiv.innerHTML = marked.parse(full);
                         addCodeFeatures(cDiv);
                         Prism.highlightAllUnder(cDiv);
@@ -234,12 +222,9 @@
                     }
                 }
             } else {
-                // Non-streaming fallback
                 const text = await res.text();
                 full = text;
                 div.querySelector('#think')?.remove();
-                neuronStats.count += (text.length * 0.4);
-                updateGauge();
                 cDiv.innerHTML = marked.parse(full);
                 addCodeFeatures(cDiv);
                 Prism.highlightAllUnder(cDiv);
@@ -460,7 +445,6 @@
     });
 
     window.onload = () => {
-        updateGauge();
         if (activeChatId && chats[activeChatId]) {
             loadChat(activeChatId);
         } else {
